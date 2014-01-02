@@ -1,0 +1,10 @@
+.goal{
+	font-size: 30px;
+
+}
+.goalCheck{
+	height: 40px;
+	width: 20px;
+	margin-right: 10px !important;
+	float: left;
+}
