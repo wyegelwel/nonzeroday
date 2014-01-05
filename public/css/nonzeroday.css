@@ -1,5 +1,6 @@
 .goal{
 	font-size: 30px;
+	cursor: pointer;
 
 }
 .goalCheck{
@@ -7,4 +8,14 @@
 	width: 20px;
 	margin-right: 10px !important;
 	float: left;
+	cursor: pointer;
+}
+
+.btn-rm, .btn-rm:hover, .btn-rm:focus, .btn-rm:active{
+	background-color: #ffffff;
+	border-color: #ffffff;
+}
+
+.glyphicon-rm{
+	color: #d9534f;
 }

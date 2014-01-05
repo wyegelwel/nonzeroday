@@ -2,9 +2,19 @@ var D = {goals: [],
 		 dayShowing: -1};
 
 function toggleGoalCompletion(goal){
+	console.log(goal)
 	D.goals[D.dayShowing][goal].completed = !D.goals[D.dayShowing][goal].completed;
 	saveData();
 }
+
+function removeGoal(goal){
+	console.log(goal)
+	delete D.goals[D.dayShowing][goal];
+	clearGoals();
+	displayGoals(D.goals[D.dayShowing]);
+	saveData();
+}
+
 
 function displayGoal(goal, container){
 	goalWrapper = $("<div>");	
@@ -14,8 +24,15 @@ function displayGoal(goal, container){
 								  .attr("name", goal.text)
 								  .prop("checked", goal.completed)
 								  .click(function(e){
-								  		toggleGoalCompletion($(this).attr("name"));
+								  		toggleGoalCompletion(goal.text);
 								  });
+	removeButton = $("<button>").attr("name", goal.text)
+								.addClass("btn btn-danger btn-lg btn-rm")
+								.click(function(e){
+									removeGoal(goal.text)
+								})
+								.appendTo(goalWrapper);					
+	$("<span>").addClass("glyphicon glyphicon-remove-sign glyphicon-rm").appendTo(removeButton);
 	goalWrapper.appendTo(container);
 }
 
@@ -59,7 +76,11 @@ function loadData(){
 	if (goals){
 		D.goals = JSON.parse(goals);
 	}else {
-		D.goals = [{date: "today"}];
+		D.goals = [{date: "today", 
+					"Add goals": {
+									text: "Add goals",
+									completed: false
+					}}];
 	}
 	D.dayShowing = D.goals.length - 1; //goals pushed to end of list for each day 
 }
