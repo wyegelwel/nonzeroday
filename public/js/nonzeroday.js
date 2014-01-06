@@ -85,10 +85,39 @@ function loadData(){
 	D.dayShowing = D.goals.length - 1; //goals pushed to end of list for each day 
 }
 
+function updateMonthYear() {			
+	$month = $( '#custom-month' ).html( cal.getMonthName() );
+	$year = $( '#custom-year' ).html( cal.getYear() );	
+	$month.html( cal.getMonthName() );
+	$year.html( cal.getYear() );
+}
+
+function setupCalendar(){
+	$calendar = $( '#calendar' );
+	cal = $calendar.calendario( {
+		onDayClick : function( $el, $contentEl, dateProperties ) {
+			console.log(dateProperties);
+		},
+		
+		displayWeekAbbr : true
+	} );
+	$month = $( '#custom-month' ).html( cal.getMonthName() );
+	$year = $( '#custom-year' ).html( cal.getYear() );
+
+	$( '#custom-next' ).on( 'click', function() {
+		cal.gotoNextMonth( updateMonthYear );
+	} );
+	$( '#custom-prev' ).on( 'click', function() {
+		cal.gotoPreviousMonth( updateMonthYear );
+	} );
+}
+
 function onStartUp(){
 	loadData();
+	setupCalendar();
 	console.log(D.goals[D.dayShowing]);
 	displayGoals(D.goals[D.dayShowing]);
+
 }
 
 onStartUp();

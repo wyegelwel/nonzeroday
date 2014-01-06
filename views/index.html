@@ -2,28 +2,46 @@
 <html lang="en">
 <head> 
 <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
-
+<link rel="stylesheet" type="text/css" href="css/calendar.css" />
 <link href="css/nonzeroday.css" rel="stylesheet">
 </head>
 <body class="container">
-	<div id="goalContainer"> </div>
-		<h3> Goals </h3>
-		<div id="createdGoalsContainer">
+	<section>
+	<div class="custom-calendar-wrap">
+		<div id="custom-inner" class="custom-inner">
+			<div class="custom-header clearfix">
+				<nav>
+					<span id="custom-prev" class="custom-prev"></span>
+					<span id="custom-next" class="custom-next"></span>
+				</nav>
+				<h2 id="custom-month" class="custom-month"></h2>
+				<h3 id="custom-year" class="custom-year"></h3>
+			</div>
+			<div id="calendar" class="fc-calendar-container"></div>
 		</div>
-		<form class="form-inline" role="form">
-		  <div class="form-group">
-		  		<label class="sr-only" for="newGoal"> New Goal </label>
-		      	<input type="text" class="form-control" id="newGoal" placeholder="New Goal">
-		  </div>
-		  <button type="button" class="btn btn-primary" id="addBtn">
-				<span class="glyphicon glyphicon-plus"></span> Add
-		   </button>
- 		 </form>
-</form>
+	</div>
+</section>
+	<center>
+		<div id="goalContainer"> </div>
+			<h3> Goals </h3>
+			<div id="createdGoalsContainer">
+			</div>
+			<form class="form-inline" role="form">
+			  <div class="form-group">
+			  		<label class="sr-only" for="newGoal"> New Goal </label>
+			      	<input type="text" class="form-control" id="newGoal" placeholder="New Goal">
+			  </div>
+			  <button type="button" class="btn btn-primary" id="addBtn">
+					<span class="glyphicon glyphicon-plus"></span> Add
+			   </button>
+	 		 </form>
+	 	</div>
+ 	</center>
 </body>
 
 <script src="js/jquery.js"></script>
 <script src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.calendario.js"></script>
 <script src="js/nonzeroday.js"></script>
 
 </html>
