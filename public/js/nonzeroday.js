@@ -1,5 +1,9 @@
 var D = {goals: [], 
-		 dayShowing: -1};
+		 dayShowing: ""};
+var defaultGoals = {"Add goals": {
+									text: "Add goals",
+									completed: false
+									}};
 
 function toggleGoalCompletion(goal){
 	console.log(goal)
@@ -37,6 +41,7 @@ function displayGoal(goal, container){
 }
 
 function displayGoals(goals){
+	console.log(goals)
 	goalContainer = $("#createdGoalsContainer");
 	if (Object.keys(goals).length > 0){
 		for (var goal in goals){
@@ -76,48 +81,91 @@ function loadData(){
 	if (goals){
 		D.goals = JSON.parse(goals);
 	}else {
-		D.goals = [{date: "today", 
-					"Add goals": {
-									text: "Add goals",
-									completed: false
-					}}];
+		D.goals = {};
 	}
-	D.dayShowing = D.goals.length - 1; //goals pushed to end of list for each day 
 }
 
 function updateMonthYear() {			
-	$month = $( '#custom-month' ).html( cal.getMonthName() );
-	$year = $( '#custom-year' ).html( cal.getYear() );	
-	$month.html( cal.getMonthName() );
-	$year.html( cal.getYear() );
+	$month = $( '#custom-month' ).html( D.cal.getMonthName() );
+	$year = $( '#custom-year' ).html( D.cal.getYear() );	
+	$month.html( D.cal.getMonthName() );
+	$year.html( D.cal.getYear() );
+}
+
+function copyGoals(goals){
+	newGoals = {};
+	for (goal in goals){
+		newGoals[goal] = {"text": goal,
+						  "completed": false};
+	}
+	return newGoals;
+}
+
+
+function daySelected(day){
+	if (!D.goals[day]){
+		dates = Object.keys(D.goals);
+		if (dates.length == 0){
+			D.goals[day] = copyGoals(defaultGoals);
+		} else{
+			//Carry over the goals from the most recent day before 'day'
+			dates = $.map(dates,function(v,i){return parseInt(v);}).sort();
+			datesBefore = dates.filter(function(v,i){ return (v < day);});
+			if (datesBefore.length > 0){
+				lastDateBefore = datesBefore[datesBefore.length-1];
+				D.goals[day] = copyGoals(D.goals[lastDateBefore]);
+			}else{
+				D.goals[day] = copyGoals(defaultGoals);
+			}
+		}
+	}
+	D.dayShowing = day;
+	clearGoals();
+	displayGoals(D.goals[D.dayShowing]);
+	saveData();
+}
+
+function pad(d) {
+    return (d < 10) ? '0' + d.toString() : d.toString();
 }
 
 function setupCalendar(){
 	$calendar = $( '#calendar' );
-	cal = $calendar.calendario( {
-		onDayClick : function( $el, $contentEl, dateProperties ) {
-			console.log(dateProperties);
+	D.cal = $calendar.calendario( {
+		onDayClick : function( $el, $contentEl, date ) {
+			console.log(date);
+			$(".fc-selected").removeClass("fc-selected");
+			$el.addClass("fc-selected");
+			daySelected(date.year + "" + pad(date.month) + pad(date.day));
 		},
 		
 		displayWeekAbbr : true
 	} );
-	$month = $( '#custom-month' ).html( cal.getMonthName() );
-	$year = $( '#custom-year' ).html( cal.getYear() );
+	$month = $( '#custom-month' ).html( D.cal.getMonthName() );
+	$year = $( '#custom-year' ).html( D.cal.getYear() );
 
 	$( '#custom-next' ).on( 'click', function() {
-		cal.gotoNextMonth( updateMonthYear );
+		D.cal.gotoNextMonth( updateMonthYear );
 	} );
 	$( '#custom-prev' ).on( 'click', function() {
-		cal.gotoPreviousMonth( updateMonthYear );
+		D.cal.gotoPreviousMonth( updateMonthYear );
 	} );
 }
 
 function onStartUp(){
 	loadData();
 	setupCalendar();
-	console.log(D.goals[D.dayShowing]);
-	displayGoals(D.goals[D.dayShowing]);
-
+	$(".fc-today").click();
 }
 
 onStartUp();
+
+
+//TODO
+/*
+When enter is clicked, it refreshes page.. fix that
+make selected day partially transparent
+make items completed reflect in calendar
+left align goals
+allow users to add notes when they complete a goal
+*/
