@@ -11,9 +11,8 @@ var defaultGoals = {"Exercise": {
 var defaultColors = ["rgb(105, 177, 240)", "#ed9c28", "#3276b1", "#47a447", "#39b3d7", "#d2322d"]
 
 function toggleGoalCompletion(goal){
-	console.log(goal)
+	console.log("toggle " + goal)
 	D.goals[D.dayShowing][goal].completed = !D.goals[D.dayShowing][goal].completed;
-	$("#ta-" + goal).toggle();
 	saveData();
 }
 
@@ -29,30 +28,32 @@ function removeGoal(goal){
 function displayGoal(goal, container, opts){
 	console.log(goal);
 	goalWrapper = $("<div>");	
-	label = $("<label>").addClass("goal").text(goal.text).css("color", opts.textColor).appendTo(goalWrapper);
+	var textarea =  $("<textarea>").addClass("goalNote form-control")
+								   .val(goal.notes)
+								   .toggle(goal.completed).attr("id", "ta-" + goal.text)
+								   .focusout(function(){
+								   		console.log($(this).val());
+								   		goal.notes = $(this).val();
+								   		saveData();
+								   })
+								   
+	var label = $("<label>").addClass("goal").text(goal.text).css("color", opts.textColor).appendTo(goalWrapper);
 	$("<input type='checkbox' />").addClass("goalCheck")
 								  .appendTo(label)
 								  .attr("name", goal.text)
 								  .prop("checked", goal.completed)
 								  .click(function(e){
 								  		toggleGoalCompletion(goal.text);
+								  		textarea.toggle();
 								  });
-	removeButton = $("<button>").attr("name", goal.text)
+	var removeButton = $("<button>").attr("name", goal.text)
 								.addClass("btn btn-danger btn-lg btn-rm")
 								.click(function(e){
 									removeGoal(goal.text)
 								})
 								.appendTo(goalWrapper);					
 	$("<span>").addClass("glyphicon glyphicon-remove-sign glyphicon-rm").appendTo(removeButton);
-	$("<textarea>").addClass("goalNote form-control")
-				   .val(goal.notes)
-				   .toggle(goal.completed).attr("id", "ta-" + goal.text)
-				   .focusout(function(){
-				   		console.log($(this).val());
-				   		goal.notes = $(this).val();
-				   		saveData();
-				   })
-				   .appendTo(goalWrapper);
+	textarea.appendTo(goalWrapper);
 	goalWrapper.appendTo(container);
 }
 
