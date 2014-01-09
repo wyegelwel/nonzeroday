@@ -1,9 +1,13 @@
 var D = {goals: [], 
 		 dayShowing: ""};
-var defaultGoals = {"Add goals": {
-									text: "Add goals",
+var defaultGoals = {"Exercise": {
+									text: "Exercise",
 									completed: false
-									}};
+									},
+					 "Read": {
+					 			text: "Read",
+					 			completed: false
+					 }};
 
 function toggleGoalCompletion(goal){
 	console.log(goal)
@@ -109,8 +113,8 @@ function daySelected(day){
 			D.goals[day] = copyGoals(defaultGoals);
 		} else{
 			//Carry over the goals from the most recent day before 'day'
-			dates = $.map(dates,function(v,i){return parseInt(v);}).sort();
-			datesBefore = dates.filter(function(v,i){ return (v < day);});
+			dates = $.map(dates,function(v,i){return parseInt(v);}).filter(function(v,i){ return (v < day);});
+			datesBefore = dates.sort();
 			if (datesBefore.length > 0){
 				lastDateBefore = datesBefore[datesBefore.length-1];
 				D.goals[day] = copyGoals(D.goals[lastDateBefore]);
