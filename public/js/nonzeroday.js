@@ -8,6 +8,7 @@ var defaultGoals = {"Exercise": {
 					 			text: "Read",
 					 			completed: false
 					 }};
+var defaultColors = ["rgb(105, 177, 240)", "#ed9c28", "#3276b1", "#47a447", "#39b3d7", "#d2322d"]
 
 function toggleGoalCompletion(goal){
 	console.log(goal)
@@ -24,9 +25,9 @@ function removeGoal(goal){
 }
 
 
-function displayGoal(goal, container){
+function displayGoal(goal, container, opts){
 	goalWrapper = $("<div>");	
-	label = $("<label>").addClass("goal").text(goal.text).appendTo(goalWrapper);
+	label = $("<label>").addClass("goal").text(goal.text).css("color", opts.textColor).appendTo(goalWrapper);
 	$("<input type='checkbox' />").addClass("goalCheck")
 								  .appendTo(label)
 								  .attr("name", goal.text)
@@ -48,11 +49,13 @@ function displayGoals(goals){
 	console.log(goals)
 	goalContainer = $("#createdGoalsContainer");
 	if (Object.keys(goals).length > 0){
+		var i = 0;
 		for (var goal in goals){
 			console.log(goals[goal])
 			//Make sure to only try to display goal objects
 			if (goals[goal].text){ 
-				displayGoal(goals[goal], goalContainer);
+				displayGoal(goals[goal], goalContainer, {textColor: defaultColors[i]});
+				i++;
 			}	
 		}
 	}
@@ -78,6 +81,7 @@ $("#addBtn").click(function(){
 
 function saveData(){
 	localStorage["goals"] = JSON.stringify(D.goals);
+	colorCalendar();
 }
 
 function loadData(){
@@ -89,13 +93,6 @@ function loadData(){
 	}
 }
 
-function updateMonthYear() {			
-	$month = $( '#custom-month' ).html( D.cal.getMonthName() );
-	$year = $( '#custom-year' ).html( D.cal.getYear() );	
-	$month.html( D.cal.getMonthName() );
-	$year.html( D.cal.getYear() );
-}
-
 function copyGoals(goals){
 	newGoals = {};
 	for (goal in goals){
@@ -105,18 +102,17 @@ function copyGoals(goals){
 	return newGoals;
 }
 
-
 function daySelected(day){
 	if (!D.goals[day]){
-		dates = Object.keys(D.goals);
+		var dates = Object.keys(D.goals);
 		if (dates.length == 0){
 			D.goals[day] = copyGoals(defaultGoals);
 		} else{
 			//Carry over the goals from the most recent day before 'day'
 			dates = $.map(dates,function(v,i){return parseInt(v);}).filter(function(v,i){ return (v < day);});
-			datesBefore = dates.sort();
+			var datesBefore = dates.sort();
 			if (datesBefore.length > 0){
-				lastDateBefore = datesBefore[datesBefore.length-1];
+				var lastDateBefore = datesBefore[datesBefore.length-1];
 				D.goals[day] = copyGoals(D.goals[lastDateBefore]);
 			}else{
 				D.goals[day] = copyGoals(defaultGoals);
@@ -131,6 +127,42 @@ function daySelected(day){
 
 function pad(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
+}
+
+function colorCalendar(){
+	var currMonth = D.cal.getMonth();
+	for (date in D.goals){
+		var month = parseInt(date.substring(4,6));
+		var day = parseInt(date.substring(6,8));
+		if (currMonth == month && Object.keys(D.goals[date]).length > 0){
+			var cell = $(D.cal.getCell(day));
+			var goalCompleted = false;
+			var step = 1/Object.keys(D.goals[date]).length*100;
+			var goalCss = "";
+			var i = 0;
+			for (goal in D.goals[date]){
+				var color = (D.goals[date][goal].completed) ? defaultColors[i] : "white";
+				goalCss += color + " " + i*step + "%, " + color + " " + (i+1)*step + "%,";
+				i++;
+			}
+			goalCss = goalCss.substring(0, goalCss.length-1);
+
+			cell.css("background", "-webkit-linear-gradient(top, " + goalCss + ")");			
+			cell.css("background", "-o-linear-gradient(top, " + goalCss + ")");
+			cell.css("background", "-moz-linear-gradient(top, " + goalCss + ")");
+			cell.css("background", "-ms-linear-gradient(top, " + goalCss + ")");
+			cell.css("background", "linear-gradient(to bottom, " + goalCss + ")");
+		}
+	}
+}
+
+function updateMonthYear() {			
+	$month = $( '#custom-month' ).html( D.cal.getMonthName() );
+	$year = $( '#custom-year' ).html( D.cal.getYear() );	
+	$month.html( D.cal.getMonthName() );
+	$year.html( D.cal.getYear() );
+
+	colorCalendar();
 }
 
 function setupCalendar(){
@@ -154,6 +186,8 @@ function setupCalendar(){
 	$( '#custom-prev' ).on( 'click', function() {
 		D.cal.gotoPreviousMonth( updateMonthYear );
 	} );
+
+	colorCalendar();
 }
 
 function onStartUp(){
@@ -168,8 +202,7 @@ onStartUp();
 //TODO
 /*
 When enter is clicked, it refreshes page.. fix that
-make selected day partially transparent
-make items completed reflect in calendar
-left align goals
 allow users to add notes when they complete a goal
+have color of goal consistent through days
+select color that work well with text
 */

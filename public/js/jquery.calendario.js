@@ -280,9 +280,13 @@
 
 			var row = Math.floor( ( day + this.startingDay - this.options.startIn ) / 7 ),
 				pos = day + this.startingDay - this.options.startIn - ( row * 7 ) - 1;
-
-			return this.$cal.find( 'div.fc-body' ).children( 'div.fc-row' ).eq( row ).children( 'div' ).eq( pos ).children( 'div' );
-
+	
+			var cellList = this.$cal.find( 'div.fc-body' ).children( 'div.fc-row' ).eq( row ).children( 'div' ).eq( pos );
+			if (cellList.length == 1){
+				return cellList[0];
+			}else{
+				return null;
+			}
 		},
 		setData : function( caldata ) {
 
