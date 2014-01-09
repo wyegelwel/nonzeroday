@@ -13,6 +13,7 @@ var defaultColors = ["rgb(105, 177, 240)", "#ed9c28", "#3276b1", "#47a447", "#39
 function toggleGoalCompletion(goal){
 	console.log(goal)
 	D.goals[D.dayShowing][goal].completed = !D.goals[D.dayShowing][goal].completed;
+	$("#ta-" + goal).toggle();
 	saveData();
 }
 
@@ -26,6 +27,7 @@ function removeGoal(goal){
 
 
 function displayGoal(goal, container, opts){
+	console.log(goal);
 	goalWrapper = $("<div>");	
 	label = $("<label>").addClass("goal").text(goal.text).css("color", opts.textColor).appendTo(goalWrapper);
 	$("<input type='checkbox' />").addClass("goalCheck")
@@ -42,6 +44,15 @@ function displayGoal(goal, container, opts){
 								})
 								.appendTo(goalWrapper);					
 	$("<span>").addClass("glyphicon glyphicon-remove-sign glyphicon-rm").appendTo(removeButton);
+	$("<textarea>").addClass("goalNote form-control")
+				   .val(goal.notes)
+				   .toggle(goal.completed).attr("id", "ta-" + goal.text)
+				   .focusout(function(){
+				   		console.log($(this).val());
+				   		goal.notes = $(this).val();
+				   		saveData();
+				   })
+				   .appendTo(goalWrapper);
 	goalWrapper.appendTo(container);
 }
 
@@ -203,7 +214,6 @@ onStartUp();
 
 //TODO
 /*
-allow users to add notes when they complete a goal
 have color of goal consistent through days
 select color that work well with text
 */

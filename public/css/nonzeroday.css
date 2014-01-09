@@ -11,6 +11,16 @@
 	cursor: pointer;
 }
 
+.goalNote{
+	width:90%;
+	float: right;
+	margin-bottom: 10px;
+}
+
+#addForm{
+	margin-top: 10px;
+}
+
 .btn-rm, .btn-rm:hover, .btn-rm:focus, .btn-rm:active{
 	background-color: #ffffff;
 	border-color: #ffffff;
