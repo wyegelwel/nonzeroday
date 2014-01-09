@@ -190,6 +190,8 @@ function setupCalendar(){
 	colorCalendar();
 }
 
+$("#addForm").submit(function() {$("#addBtn").click()});
+
 function onStartUp(){
 	loadData();
 	setupCalendar();
