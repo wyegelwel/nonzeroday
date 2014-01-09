@@ -203,7 +203,6 @@ onStartUp();
 
 //TODO
 /*
-When enter is clicked, it refreshes page.. fix that
 allow users to add notes when they complete a goal
 have color of goal consistent through days
 select color that work well with text
