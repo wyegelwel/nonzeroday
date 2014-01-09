@@ -23,6 +23,9 @@ console.log(__dirname);
 app.get('/', function(req, res) {
   res.sendfile(__dirname + "/views/index.html");
 });
+app.get('/about', function(req, res) {
+  res.sendfile(__dirname + "/views/about.html");
+});
 
 var server = http.createServer(app);
 server.listen(app.get('port'), function(){

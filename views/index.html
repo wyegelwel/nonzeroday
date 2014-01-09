@@ -5,22 +5,31 @@
 <link rel="stylesheet" type="text/css" href="css/calendar.css" />
 <link href="css/nonzeroday.css" rel="stylesheet">
 </head>
-<body class="container">
-	<section>
-	<div class="custom-calendar-wrap">
-		<div id="custom-inner" class="custom-inner">
-			<div class="custom-header clearfix">
-				<nav>
-					<span id="custom-prev" class="glyphicon glyphicon-chevron-left"></span>
-					<span id="custom-next" class="glyphicon glyphicon-chevron-right"></span>
-				</nav>
-				<h2 id="custom-month" class="custom-month"></h2>
-				<h3 id="custom-year" class="custom-year"></h3>
-			</div>
-			<div id="calendar" class="fc-calendar-container"></div>
+<body >
+	<nav class="navbar navbar-default" role="navigation">
+		<div class="navbar-header"> 
+		    <a class="navbar-brand" href="/">Non Zero Day</a>
 		</div>
-	</div>
-</section>
+		<ul class="nav navbar-nav">
+	      <li><a href="/about">About</a></li>
+	    </ul>
+	</nav>
+	<div class="container">
+		<section>
+			<div class="custom-calendar-wrap">
+				<div id="custom-inner" class="custom-inner">
+					<div class="custom-header clearfix">
+						<nav>
+							<span id="custom-prev" class="glyphicon glyphicon-chevron-left"></span>
+							<span id="custom-next" class="glyphicon glyphicon-chevron-right"></span>
+						</nav>
+						<h2 id="custom-month" class="custom-month"></h2>
+						<h3 id="custom-year" class="custom-year"></h3>
+					</div>
+					<div id="calendar" class="fc-calendar-container"></div>
+				</div>
+			</div>
+		</section>
 
 		<div id="goalContainer" class = "col-md-6 col-md-offset-4"> 
 			<h3> Goals </h3>
@@ -36,7 +45,7 @@
 			   </button>
 	 		 </form>
 	 	</div>
-
+	 </div>
 </body>
 
 <script src="js/jquery.js"></script>
