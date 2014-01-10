@@ -224,7 +224,7 @@ function redraw(){
 $("form").submit(function() {return false;});
 $("#addForm").submit(function() {$("#addBtn").click()});
 
-
+$("#changeColorBtn").click(function(){showColorModal();});
 $("#addBtn").click(function(){
 	goalBox = $("#newGoal");
 	goalText = $.trim(goalBox.val());
