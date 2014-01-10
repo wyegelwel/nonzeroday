@@ -8,7 +8,7 @@ var defaultGoals = {"Exercise": {
 					 }};
 var defaultGoalMap = {"Exercise" : {color: "#69b1f0"},
 					  "Read": {color: "#ed9c28"}}
-var defaultColors = ["#3276b1", "#47a447", "#39b3d7", "#d2322d"]
+var defaultColors = ["#3276b1", "#47a447", "#39b3d7", "#d2322d", "#69b1f0", "#ed9c28"]
 
 var D = {goals: {}, 
 		 dayShowing: "",
@@ -92,9 +92,22 @@ function saveData(){
 
 function loadData(){
 	goals = localStorage["goals"];
+	goalMap = localStorage["goalMap"];
 	if (goals){
 		D.goals = JSON.parse(goals);
-		D.goalMap = JSON.parse(localStorage["goalMap"]);
+		if (goalMap){
+			D.goalMap = JSON.parse(goalMap);
+		} else{
+			D.goalMap = {};
+			for (var date in D.goals){
+				for (var goal in D.goals[date]){
+					if (!D.goalMap[goal]){
+						D.goalMap[goal] = {color: defaultColors.shift()};
+						defaultColors.push(D.goalMap[goal].color);
+					}
+				}
+			}
+		}
 	}else {
 		D.goals = {};
 		D.goalMap = defaultGoalMap;
@@ -232,6 +245,7 @@ $("#addBtn").click(function(){
 		goal = {text: goalText, completed:false}
 		D.goals[D.dayShowing][goalText] = goal;
 		D.goalMap[goalText] = {color: defaultColors.shift()}
+		defaultColors.push(D.goalMap[goalText].color);
 		saveData();
 		colorCalendar();
 		clearGoals();
