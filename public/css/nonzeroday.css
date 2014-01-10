@@ -19,6 +19,11 @@
 
 #addForm{
 	margin-top: 10px;
+	padding-bottom: 100px
+}
+
+#addBtn{
+	float: right;
 }
 
 .btn-rm, .btn-rm:hover, .btn-rm:focus, .btn-rm:active{
@@ -26,9 +31,16 @@
 	border-color: #ffffff;
 }
 
+.navbar{
+	margin-bottom: 0px;
+}
+
 .glyphicon-rm{
 	color: #d9534f;
 }
 
+.custom-year{
+	margin-top: 10px
+}
 
 /*See http://jsfiddle.net/KcsM2/ for how to do multiple colors for background for calendar*/
