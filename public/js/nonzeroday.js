@@ -6,7 +6,7 @@ var defaultGoals = {"Exercise": {
 					 			text: "Read",
 					 			completed: false
 					 }};
-var defaultGoalMap = {"Exercise" : {color: "rgb(105, 177, 240)"},
+var defaultGoalMap = {"Exercise" : {color: "#69b1f0"},
 					  "Read": {color: "#ed9c28"}}
 var defaultColors = ["#3276b1", "#47a447", "#39b3d7", "#d2322d"]
 
@@ -15,30 +15,26 @@ var D = {goals: {},
 		 goalMap: defaultGoalMap};
 
 function toggleGoalCompletion(goal){
-	console.log("toggle " + goal)
 	D.goals[D.dayShowing][goal].completed = !D.goals[D.dayShowing][goal].completed;
-	saveGoals();
+	saveData();
 }
 
 function removeGoal(goal){
-	console.log(goal)
 	delete D.goals[D.dayShowing][goal];
 	clearGoals();
 	displayGoals(D.goals[D.dayShowing]);
-	saveGoals();
+	saveData();
 }
 
 
 function displayGoal(goal, container, opts){
-	console.log(goal);
 	goalWrapper = $("<div>");	
 	var textarea =  $("<textarea>").addClass("goalNote form-control")
 								   .val(goal.notes)
 								   .toggle(goal.completed).attr("id", "ta-" + goal.text)
 								   .focusout(function(){
-								   		console.log($(this).val());
 								   		goal.notes = $(this).val();
-								   		saveGoals();
+								   		saveData();
 								   })
 								   
 	var label = $("<label>").addClass("goal").text(goal.text).css("color", opts.textColor).appendTo(goalWrapper);
@@ -49,6 +45,7 @@ function displayGoal(goal, container, opts){
 								  .click(function(e){
 								  		toggleGoalCompletion(goal.text);
 								  		textarea.toggle();
+								  		colorCalendar();
 								  });
 	var removeButton = $("<button>").attr("name", goal.text)
 								.addClass("btn btn-danger btn-lg btn-rm")
@@ -62,12 +59,10 @@ function displayGoal(goal, container, opts){
 }
 
 function displayGoals(goals){
-	console.log(goals)
 	goalContainer = $("#createdGoalsContainer");
 	if (Object.keys(goals).length > 0){
 		var i = 0;
 		for (var goal in goals){
-			console.log(goals[goal])
 			//Make sure to only try to display goal objects
 			if (goals[goal].text){ 
 				displayGoal(goals[goal], goalContainer, {textColor: D.goalMap[goal].color});
@@ -84,12 +79,15 @@ function clearGoals(){
 
 function saveGoals(){
 	localStorage["goals"] = JSON.stringify(D.goals);
-	colorCalendar();
 }
 
 function saveGoalMap(){
 	localStorage["goalMap"] = JSON.stringify(D.goalMap);
-	colorCalendar();
+}
+
+function saveData(){
+	saveGoals();
+	saveGoalMap();
 }
 
 function loadData(){
@@ -132,7 +130,6 @@ function daySelected(day){
 	D.dayShowing = day;
 	clearGoals();
 	displayGoals(D.goals[D.dayShowing]);
-	saveGoals();
 }
 
 function pad(d) {
@@ -179,7 +176,6 @@ function setupCalendar(){
 	$calendar = $( '#calendar' );
 	D.cal = $calendar.calendario( {
 		onDayClick : function( $el, $contentEl, date ) {
-			console.log(date);
 			$(".fc-selected").removeClass("fc-selected");
 			$el.addClass("fc-selected");
 			daySelected(date.year + "" + pad(date.month) + pad(date.day));
@@ -200,6 +196,31 @@ function setupCalendar(){
 	colorCalendar();
 }
 
+function showColorModal(){
+	colorContainer = $("#colorContainer").empty();
+	for (var goal in D.goalMap){
+		var label = $("<label>").addClass("goal").text(goal).appendTo($("<div>").appendTo(colorContainer));
+		$("<input type='color' />").addClass("goalColorPick").attr("name", goal).val(D.goalMap[goal].color).appendTo(label)
+	}
+	$("#colorModal").modal();
+}
+
+$("#saveColors").click(function(){
+	colorPickers = $("#colorContainer").children().find("input[type='color']");
+	$.each(colorPickers, function(i, c){
+		var colorPicker = $(c);
+		D.goalMap[colorPicker.attr("name")].color = colorPicker.val();
+	})
+	saveData();
+	redraw();
+});
+
+function redraw(){
+	colorCalendar();
+	clearGoals();
+	displayGoals(D.goals[D.dayShowing]);
+}
+
 $("form").submit(function() {return false;});
 $("#addForm").submit(function() {$("#addBtn").click()});
 
@@ -207,13 +228,12 @@ $("#addForm").submit(function() {$("#addBtn").click()});
 $("#addBtn").click(function(){
 	goalBox = $("#newGoal");
 	goalText = $.trim(goalBox.val());
-	console.log(goalText)
 	if (goalText.length > 0){
 		goal = {text: goalText, completed:false}
 		D.goals[D.dayShowing][goalText] = goal;
 		D.goalMap[goalText] = {color: defaultColors.shift()}
-		saveGoals();
-		saveGoalMap();
+		saveData();
+		colorCalendar();
 		clearGoals();
 		displayGoals(D.goals[D.dayShowing]);
 		goalBox.val('');

@@ -43,4 +43,12 @@
 	margin-top: 10px
 }
 
+.goalColorPick{
+	float: left;
+	height: 30px;
+	width: 30px;
+	margin-right: 5px;
+	margin-top: 5px;
+}
+
 /*See http://jsfiddle.net/KcsM2/ for how to do multiple colors for background for calendar*/
