@@ -143,7 +143,7 @@ function pad(d) {
 
 function colorCalendar(){
 	var currMonth = D.cal.getMonth();
-	for (date in D.goals){
+	for (var date in D.goals){
 		var month = parseInt(date.substring(4,6));
 		var day = parseInt(date.substring(6,8));
 		if (currMonth == month && Object.keys(D.goals[date]).length > 0){
