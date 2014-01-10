@@ -1,5 +1,3 @@
-var D = {goals: [], 
-		 dayShowing: ""};
 var defaultGoals = {"Exercise": {
 									text: "Exercise",
 									completed: false
@@ -8,12 +6,18 @@ var defaultGoals = {"Exercise": {
 					 			text: "Read",
 					 			completed: false
 					 }};
-var defaultColors = ["rgb(105, 177, 240)", "#ed9c28", "#3276b1", "#47a447", "#39b3d7", "#d2322d"]
+var defaultGoalMap = {"Exercise" : {color: "rgb(105, 177, 240)"},
+					  "Read": {color: "#ed9c28"}}
+var defaultColors = ["#3276b1", "#47a447", "#39b3d7", "#d2322d"]
+
+var D = {goals: {}, 
+		 dayShowing: "",
+		 goalMap: defaultGoalMap};
 
 function toggleGoalCompletion(goal){
 	console.log("toggle " + goal)
 	D.goals[D.dayShowing][goal].completed = !D.goals[D.dayShowing][goal].completed;
-	saveData();
+	saveGoals();
 }
 
 function removeGoal(goal){
@@ -21,7 +25,7 @@ function removeGoal(goal){
 	delete D.goals[D.dayShowing][goal];
 	clearGoals();
 	displayGoals(D.goals[D.dayShowing]);
-	saveData();
+	saveGoals();
 }
 
 
@@ -34,7 +38,7 @@ function displayGoal(goal, container, opts){
 								   .focusout(function(){
 								   		console.log($(this).val());
 								   		goal.notes = $(this).val();
-								   		saveData();
+								   		saveGoals();
 								   })
 								   
 	var label = $("<label>").addClass("goal").text(goal.text).css("color", opts.textColor).appendTo(goalWrapper);
@@ -66,7 +70,7 @@ function displayGoals(goals){
 			console.log(goals[goal])
 			//Make sure to only try to display goal objects
 			if (goals[goal].text){ 
-				displayGoal(goals[goal], goalContainer, {textColor: defaultColors[i]});
+				displayGoal(goals[goal], goalContainer, {textColor: D.goalMap[goal].color});
 				i++;
 			}	
 		}
@@ -77,22 +81,14 @@ function clearGoals(){
 	$("#createdGoalsContainer").empty();
 }
 
-$("#addBtn").click(function(){
-	goalBox = $("#newGoal");
-	goalText = $.trim(goalBox.val());
-	console.log(goalText)
-	if (goalText.length > 0){
-		goal = {text: goalText, completed:false}
-		D.goals[D.dayShowing][goalText] = goal;
-		clearGoals();
-		displayGoals(D.goals[D.dayShowing]);
-		goalBox.val('');
-		saveData();
-	}
-});
 
-function saveData(){
+function saveGoals(){
 	localStorage["goals"] = JSON.stringify(D.goals);
+	colorCalendar();
+}
+
+function saveGoalMap(){
+	localStorage["goalMap"] = JSON.stringify(D.goalMap);
 	colorCalendar();
 }
 
@@ -100,8 +96,10 @@ function loadData(){
 	goals = localStorage["goals"];
 	if (goals){
 		D.goals = JSON.parse(goals);
+		D.goalMap = JSON.parse(localStorage["goalMap"]);
 	}else {
 		D.goals = {};
+		D.goalMap = defaultGoalMap;
 	}
 }
 
@@ -134,7 +132,7 @@ function daySelected(day){
 	D.dayShowing = day;
 	clearGoals();
 	displayGoals(D.goals[D.dayShowing]);
-	saveData();
+	saveGoals();
 }
 
 function pad(d) {
@@ -153,7 +151,7 @@ function colorCalendar(){
 			var goalCss = "";
 			var i = 0;
 			for (goal in D.goals[date]){
-				var color = (D.goals[date][goal].completed) ? defaultColors[i] : "white";
+				var color = (D.goals[date][goal].completed) ? D.goalMap[goal].color : "white";
 				goalCss += color + " " + i*step + "%, " + color + " " + (i+1)*step + "%,";
 				i++;
 			}
@@ -205,6 +203,25 @@ function setupCalendar(){
 $("form").submit(function() {return false;});
 $("#addForm").submit(function() {$("#addBtn").click()});
 
+
+$("#addBtn").click(function(){
+	goalBox = $("#newGoal");
+	goalText = $.trim(goalBox.val());
+	console.log(goalText)
+	if (goalText.length > 0){
+		goal = {text: goalText, completed:false}
+		D.goals[D.dayShowing][goalText] = goal;
+		D.goalMap[goalText] = {color: defaultColors.shift()}
+		saveGoals();
+		saveGoalMap();
+		clearGoals();
+		displayGoals(D.goals[D.dayShowing]);
+		goalBox.val('');
+		
+
+	}
+});
+
 function onStartUp(){
 	loadData();
 	setupCalendar();
@@ -213,6 +230,10 @@ function onStartUp(){
 
 onStartUp();
 
+function reset(){
+	localStorage.removeItem("goals");
+	localStorage.removeItem("goalMap");
+}
 
 //TODO
 /*
