@@ -277,9 +277,9 @@
 		// gets the cell's content div associated to a day of the current displayed month
 		// day : 1 - [28||29||30||31]
 		getCell : function( day ) {
-
-			var row = Math.floor( ( day + this.startingDay - this.options.startIn - 1) / 7 ),
-				pos = day + this.startingDay - this.options.startIn - ( row * 7 ) - 1;
+			var start = (((this.startingDay-this.options.startIn)%7)+7)%7; //want between 0-6
+			var row = Math.floor( ( day +start - 1) / 7 ),
+				pos = (day + start - 1)%7;
 	
 			var cellList = this.$cal.find( 'div.fc-body' ).children( 'div.fc-row' ).eq( row ).children( 'div' ).eq( pos );
 			if (cellList.length == 1){
