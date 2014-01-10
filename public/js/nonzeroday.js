@@ -202,6 +202,7 @@ function setupCalendar(){
 	colorCalendar();
 }
 
+$("form").submit(function() {return false;});
 $("#addForm").submit(function() {$("#addBtn").click()});
 
 function onStartUp(){
